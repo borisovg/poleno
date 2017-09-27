@@ -6,6 +6,9 @@
   "scripts": {
     "test": "make test"
   },
+  "bin": {
+    "poleno": "./viewer.js"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/borisovg/poleno.git"
