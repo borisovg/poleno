@@ -60,6 +60,7 @@ The `options` object can include the following properties:
 
 Creates a child logger.
 The `.name` property on the log message JSON will be the parent name and `name` separated by the `:` character.
+If the name property is a falsy value then the child logger inherits parent name.
 
 If the optional `params` object is provided then its properties will be included in every log message.
 

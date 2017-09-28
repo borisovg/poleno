@@ -188,6 +188,13 @@ describe('index.js', function () {
         expect(messages[0].name).to.equal('FOO:BAR:BAZ');
     });
 
+    it('sets correct child logger name when name is not provided', function () {
+        var log = logger('FOO')('BAR')('');
+        var messages = send_messages(log);
+
+        expect(messages[0].name).to.equal('FOO:BAR');
+    });
+
     it('sets logger params', function () {
         var log = logger('FOO', { foo: 'foo' });
         var messages = send_messages(log);
