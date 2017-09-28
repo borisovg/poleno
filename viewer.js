@@ -22,7 +22,7 @@ var usedKeys = [
     'hostname',
     'level',
     'name',
-    'message',
+    'msg',
     'pid',
     'time'
 ];
@@ -37,7 +37,7 @@ function print (o, dest) {
         data[k] = o[k];
     });
 
-    console[dest](colours[o.level] + o.time, o.hostname, o.name, o.level.toUpperCase(), '::', o.message, JSON.stringify(data, undefined, 2) + '\x1b[0m');
+    console[dest](colours[o.level] + o.time, o.hostname, o.name, o.level.toUpperCase(), '::', o.msg, JSON.stringify(data, undefined, 2) + '\x1b[0m');
 }
 
 rl.on('line', function (line) {

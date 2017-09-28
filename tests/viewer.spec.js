@@ -25,7 +25,7 @@ describe('viewer.js', function () {
                 hostname: 'B',
                 name: 'C',
                 level: level,
-                message: 'D',
+                msg: 'D',
                 foo: 'bar'
             };
 
