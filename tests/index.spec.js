@@ -80,7 +80,7 @@ describe('index.js', function () {
 
         expect(messages.length).to.equal(1);
         expect(messages[0].hello).to.equal('world');
-        expect(messages[0].message).to.equal('Hello');
+        expect(messages[0].msg).to.equal('Hello');
     });
 
     it('warn gets warn and error messages', function () {
@@ -96,7 +96,7 @@ describe('index.js', function () {
 
         messages.forEach(function (m) {
             expect(m.hello).to.equal('world');
-            expect(m.message).to.equal('Hello');
+            expect(m.msg).to.equal('Hello');
         });
     });
 
@@ -113,7 +113,7 @@ describe('index.js', function () {
 
         messages.forEach(function (m) {
             expect(m.hello).to.equal('world');
-            expect(m.message).to.equal('Hello');
+            expect(m.msg).to.equal('Hello');
         });
     });
 
@@ -130,7 +130,7 @@ describe('index.js', function () {
 
         messages.forEach(function (m) {
             expect(m.hello).to.equal('world');
-            expect(m.message).to.equal('Hello');
+            expect(m.msg).to.equal('Hello');
         });
     });
 
@@ -148,7 +148,7 @@ describe('index.js', function () {
 
         messages.forEach(function (m) {
             expect(m.hello).to.equal('world');
-            expect(m.message).to.equal('Hello');
+            expect(m.msg).to.equal('Hello');
         });
     });
 
@@ -221,7 +221,7 @@ describe('index.js', function () {
         logger('TEST').error(undefined, 'Message');
 
         messages.forEach(function (m) {
-            expect(m.message).to.equal('Message');
+            expect(m.msg).to.equal('Message');
         });
     });
 
