@@ -2,6 +2,15 @@
 
 A small and fast JSON logger for Node.js applications, inspired by [bunyan](https://github.com/trentm/node-bunyan) and [bole](https://github.com/rvagg/bole).
 
+Features:
+
+- 4 logging levels: debug, info, warn and error
+- logging functions accept a maximum of 2 arguments
+- logger can be created with a default properties object
+- child logger can inherit parent name
+- automatic parsing of Error objects
+- support for multiple streams
+
 ## Usage
 
 Installation:
