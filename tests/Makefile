@@ -20,7 +20,7 @@ test: node_modules
 		--reporter=html \
 		--reporter=text \
 		--temp-directory ./tests/.nyc_output \
-		node_modules/.bin/_mocha *.spec.js
+		node_modules/.bin/mocha *.spec.js
 
 node_modules: package.json
 	npm update || (rm -rf node_modules; exit 1)
