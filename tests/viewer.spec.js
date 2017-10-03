@@ -80,4 +80,8 @@ describe('viewer.js', function () {
 
         rl.emit('line', str);
     });
+
+    after(function () {
+        process.stdin.pause();
+    });
 });
