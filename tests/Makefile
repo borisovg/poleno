@@ -4,8 +4,7 @@ all: test
 .PHONY: clean
 clean:
 	rm -rf \
-		.nyc_output \
-		../node_modules/.cache/nyc \
+		.nyc_* \
 		coverage \
 		node_modules \
 	rm -f npm-debug.log
@@ -19,6 +18,7 @@ test: node_modules
 		--exclude tests/** \
 		--reporter=html \
 		--reporter=text \
+		--cache-dir ./.nyc_cache \
 		--temp-directory ./tests/.nyc_output \
 		node_modules/.bin/mocha *.spec.js
 
