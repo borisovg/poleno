@@ -1,4 +1,6 @@
+LCOV_FILE  = coverage/coverage.lcov
 SPEC_FILES = $(wildcard *.spec.js)
+TEMP_DIR   = ./tests/.nyc_output
 TEMP_FILES = $(wildcard .nyc_*) coverage node_modules npm-debug.log
 
 all: test
@@ -18,8 +20,18 @@ test: node_modules
 		--reporter=html \
 		--reporter=text \
 		--cache-dir ./.nyc_cache \
-		--temp-directory ./tests/.nyc_output \
+		--temp-directory $(TEMP_DIR) \
 		node_modules/.bin/mocha $(SPEC_FILES)
+
+.PHONY: coverage
+coverage:
+	./node_modules/.bin/nyc report \
+		--cwd ../ \
+		--temp-directory $(TEMP_DIR) \
+		--reporter=text-lcov \
+		> $(LCOV_FILE)
+	./node_modules/.bin/codecov \
+		-f $(LCOV_FILE)
 
 node_modules: package.json
 	npm update || (rm -rf node_modules; exit 1)
