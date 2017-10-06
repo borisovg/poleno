@@ -1,3 +1,6 @@
+[![CI Status](https://img.shields.io/travis/borisovg/poleno/master.svg?style=flat-square)](https://travis-ci.org/borisovg/poleno/)
+[![Coverage Status](https://img.shields.io/codecov/c/github/borisovg/poleno/master.svg?style=flat-square)](https://codecov.io/gh/borisovg/poleno/)
+
 # poleno
 
 A small and fast JSON logger for Node.js applications, inspired by [bunyan](https://github.com/trentm/node-bunyan) and [bole](https://github.com/rvagg/bole).
