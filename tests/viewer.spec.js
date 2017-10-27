@@ -81,6 +81,18 @@ describe('viewer.js', function () {
         rl.emit('line', str);
     });
 
+    it('ignores SIGINT if piped to', function (done) {
+        process.stdin.isTTY = false;
+        rewire('../viewer.js');
+
+        process.on('SIGINT', function () {
+            process.removeAllListeners('SIGINT');
+            done();
+        });
+
+        process.emit('SIGINT');
+    });
+
     after(function () {
         process.stdin.pause();
     });

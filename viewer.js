@@ -57,3 +57,8 @@ rl.on('line', function (line) {
         console.error(line);
     }
 });
+
+// ignore SIGINT when piped to
+if (!process.stdin.isTTY) {
+    process.on('SIGINT', function () {});
+}

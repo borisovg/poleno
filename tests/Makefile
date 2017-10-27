@@ -1,5 +1,5 @@
 LCOV_FILE  = coverage/coverage.lcov
-SPEC_FILES = $(wildcard *.spec.js)
+SPEC_FILES = index.spec.js  stringify.spec.js  viewer.spec.js
 TEMP_DIR   = ./tests/.nyc_output
 TEMP_FILES = $(wildcard .nyc_*) coverage node_modules npm-debug.log
 
