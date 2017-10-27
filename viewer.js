@@ -60,5 +60,5 @@ rl.on('line', function (line) {
 
 // ignore SIGINT when piped to
 if (!process.stdin.isTTY) {
-    process.on('SIGINT', function () {});
+    process.on('SIGINT', /*istanbul ignore next*/ function () {});
 }
