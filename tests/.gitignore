@@ -1,2 +1,3 @@
 .nyc_*
 coverage
+package-lock.json
