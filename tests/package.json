@@ -2,9 +2,9 @@
   "private": true,
   "dependencies": {
     "chai": "^4.1.2",
-    "codecov": "^2.3.0",
-    "mocha": "^4.0.0",
-    "nyc": "^11.2.1",
-    "rewire": "^2.5.2"
+    "codecov": "^3.0.1",
+    "mocha": "^5.1.1",
+    "nyc": "^11.7.1",
+    "rewire": "^4.0.1"
   }
 }
