@@ -17,6 +17,7 @@ test: node_modules
 		--all \
 		--cwd ../ \
 		--exclude tests/** \
+		--report-dir=./tests/coverage \
 		--reporter=html \
 		--reporter=text \
 		--cache-dir ./.nyc_cache \
@@ -27,8 +28,9 @@ test: node_modules
 coverage:
 	./node_modules/.bin/nyc report \
 		--cwd ../ \
-		--temp-directory $(TEMP_DIR) \
+		--report-dir=./tests/coverage \
 		--reporter=text-lcov \
+		--temp-directory $(TEMP_DIR) \
 		> $(LCOV_FILE)
 	./node_modules/.bin/codecov \
 		-f $(LCOV_FILE)
