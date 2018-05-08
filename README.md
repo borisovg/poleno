@@ -76,7 +76,7 @@ If the name property is a falsy value then the child logger inherits parent name
 
 If the optional `params` object is provided then its properties will be included in every log message.
 
-### logger.debug|info|warn|error([params], message)
+### logger.trace|debug|info|warn|error([params], message)
 
 The `message` string will be assigned to `.msg` property on the log message JSON.
 

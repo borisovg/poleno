@@ -15,6 +15,7 @@ var colours = {
     debug: '\x1b[2m',
     error: '\x1b[31m',
     info: '\x1b[1m',
+    trace: '\x1b[2m',
     warn: '\x1b[33m'
 };
 
@@ -33,6 +34,7 @@ function filter (k) {
 
 function print (o, dest) {
     var data = {};
+
     Object.keys(o).filter(filter).forEach(function (k) {
         data[k] = o[k];
     });
@@ -45,14 +47,16 @@ rl.on('line', function (line) {
         try {
             var o = JSON.parse(line);
 
-            if (o.level === 'debug' || o.level === 'info') {
+            if (o.level === 'debug' || o.level === 'info' || o.level === 'trace') {
                 print(o, 'log');
             } else {
                 print(o, 'error');
             }
+
         } catch (e) {
             console.error(line);
         }
+
     } else {
         console.error(line);
     }

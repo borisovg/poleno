@@ -11,7 +11,7 @@ var logger = require('./lib/logger.js');
 
 var config = {
     fastTime: false,
-    levels: ['debug', 'info', 'warn', 'error'],
+    levels: ['trace', 'debug', 'info', 'warn', 'error'],
     streams: {}
 };
 

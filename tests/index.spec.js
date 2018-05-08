@@ -5,7 +5,7 @@ var expect = require('chai').expect;
 var logger = require('../index.js');
 var stream = require('stream');
 
-var levels = ['debug', 'info', 'warn', 'error'];
+var levels = ['trace', 'debug', 'info', 'warn', 'error'];
 
 describe('index.js', function () {
     var w = new stream.Writable();
@@ -127,6 +127,23 @@ describe('index.js', function () {
         var messages = send_messages();
 
         expect(messages.length).to.equal(4);
+
+        messages.forEach(function (m) {
+            expect(m.hello).to.equal('world');
+            expect(m.msg).to.equal('Hello');
+        });
+    });
+
+    it('trace gets trace, debug, info, warn and error messages', function () {
+        logger.configure({
+            streams: [
+                { level: 'trace', stream: w }
+            ]
+        });
+
+        var messages = send_messages();
+
+        expect(messages.length).to.equal(5);
 
         messages.forEach(function (m) {
             expect(m.hello).to.equal('world');

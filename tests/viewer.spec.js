@@ -10,10 +10,11 @@ var colours = {
     debug: '\x1b[2m',
     error: '\x1b[31m',
     info: '\x1b[1m',
+    trace: '\x1b[2m',
     warn: '\x1b[33m'
 };
 
-var levels = ['debug', 'info', 'warn', 'error'];
+var levels = ['trace', 'debug', 'info', 'warn', 'error'];
 
 describe('viewer.js', function () {
     var rl = viewer.__get__('rl');
@@ -32,7 +33,7 @@ describe('viewer.js', function () {
             var msg = JSON.stringify(o);
             var expected = colours[level] + 'A B C ' + level.toUpperCase() + ' :: D {\n  "foo": "bar"\n}' + '\x1b[0m';
 
-            if (level === 'debug' || level === 'info') {
+            if (level === 'debug' || level === 'info' || level === 'trace') {
                 viewer.__set__('console', {
                     log: function () {
                         expect(util.format.apply(undefined, Array.prototype.slice.call(arguments))).to.equal(expected);
