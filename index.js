@@ -12,7 +12,7 @@ var logger = require('./lib/logger.js');
 var config = {
     fastTime: false,
     levels: ['trace', 'debug', 'info', 'warn', 'error'],
-    streams: {}
+    streams: Object.create(null)
 };
 
 function poleno (name, params) {
@@ -41,11 +41,9 @@ poleno.configure = function (opts) {
     }
 
     if (opts.streams) {
+        // jshint -W089
         for (l in config.streams) {
-            /* istanbul ignore else  */
-            if (config.streams.hasOwnProperty(l)) {
-                config.streams[l] = undefined;
-            }
+            config.streams[l] = undefined;
         }
 
         for (i = 0; i < opts.streams.length; i += 1) {
