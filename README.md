@@ -35,14 +35,14 @@ poleno.configure({
 Creating a logger:
 ```
 var log = poleno('FOO');
-log.info({ foo: 'foo' }, 'Foo');
+log.info('Foo', { foo: 'foo' });
 // outputs: {"time":"2017-09-27T23:30:57.657Z","hostname":"debian","pid":"15491","name":"FOO","level":"info","msg":"Foo","foo":"foo"}
 ```
 
 Creating a child logger
 ```
 var childLog = log('BAR');
-childLog.info({ bar: 'bar' }, 'Bar');
+childLog.info('Bar', { bar: 'bar' });
 // outputs: {"time":"2017-09-27T23:30:57.658Z","hostname":"debian","pid":"15491","name":"FOO:BAR","level":"info","msg":"Bar","bar":"bar"}
 ```
 
@@ -76,7 +76,7 @@ If the name property is a falsy value then the child logger inherits parent name
 
 If the optional `params` object is provided then its properties will be included in every log message.
 
-### logger.trace|debug|info|warn|error([params], message)
+### logger.trace|debug|info|warn|error(message, [params])
 
 The `message` string will be assigned to `.msg` property on the log message JSON.
 
