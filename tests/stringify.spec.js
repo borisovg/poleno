@@ -24,20 +24,15 @@ describe('lib/stringify.js', function () {
         expect(o.msg).to.equal('Message');
     });
 
-    it('stringifies log with no data', function () {
-        var o = test(undefined, 'Message');
-        expect(o.msg).to.equal('Message');
-    });
-
     it('stringifies log with null data', function () {
-        var o = test(null, 'Message');
+        var o = test('Message', null);
 
         expect(o.data).to.equal(null);
         expect(o.msg).to.equal('Message');
     });
 
     it('strips out undefined values', function () {
-        var o = test({ undef: undefined }, 'Message');
+        var o = test('Message', { undef: undefined });
 
         expect(o.msg).to.equal('Message');
         expect(Object.keys(o).indexOf('undef')).to.equal(-1);
@@ -45,7 +40,7 @@ describe('lib/stringify.js', function () {
 
     it('stringifies data which is an error object', function () {
         var err = new Error('Test');
-        var o = test(err, 'Message');
+        var o = test('Message', err);
 
         expect(o.msg).to.equal('Message');
         expect(o.error.msg).to.equal(err.msg);
@@ -53,7 +48,7 @@ describe('lib/stringify.js', function () {
     });
 
     it('stringifies nested objects', function () {
-        var o = test({ foo: { bar: 'foobar' } }, 'Message');
+        var o = test('Message', { foo: { bar: 'foobar' } });
 
         expect(o.msg).to.equal('Message');
         expect(o.foo.bar).to.equal('foobar');

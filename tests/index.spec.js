@@ -35,7 +35,7 @@ describe('index.js', function () {
         };
 
         levels.forEach(function (l) {
-            log[l](data, 'Hello');
+            log[l]('Hello', data);
         });
 
         return messages;
@@ -65,7 +65,7 @@ describe('index.js', function () {
         var log = logger('C');
 
         levels.forEach(function (l) {
-            log[l]({ hello: 'world' }, 'Test Message');
+            log[l]('Test Message', { hello: 'world' });
         });
     });
 
@@ -242,7 +242,7 @@ describe('index.js', function () {
         };
 
         logger('TEST').error('Message');
-        logger('TEST').error(undefined, 'Message');
+        logger('TEST').error('Message');
 
         messages.forEach(function (m) {
             expect(m.msg).to.equal('Message');
@@ -261,24 +261,6 @@ describe('index.js', function () {
         expect(messages.length).to.equal(0);
     });
 
-    it('assigns to data key if first argument is not an object', function () {
-        var messages = [];
-
-        w._cb = function (s) {
-            messages.push(JSON.parse(s));
-        };
-
-        logger('TEST').error(['foo'], 'Message');
-        logger('TEST').error('foo', 'Message');
-        logger('TEST').error(null, 'Message');
-        logger('TEST').error(false, 'Message');
-
-        expect(messages[0].data[0]).to.equal('foo');
-        expect(messages[1].data).to.equal('foo');
-        expect(messages[2].data).to.equal(null);
-        expect(messages[3].data).to.equal(false);
-    });
-
     it('logs error objects', function () {
         var messages = [];
         var err = new Error('Test Error');
@@ -287,8 +269,8 @@ describe('index.js', function () {
             messages.push(JSON.parse(s));
         };
 
-        logger('TEST').error({ error: err }, 'Message');
-        logger('TEST').error(err, 'Message');
+        logger('TEST').error('Message', { error: err });
+        logger('TEST').error('Message', err);
 
         messages.forEach(function (m) {
             expect(m.error.message).to.equal(err.message);
