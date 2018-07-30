@@ -74,24 +74,20 @@ describe('index.js', function () {
         });
 
         it('does nothing if no arguments provided', function () {
-            var messages = [];
-
-            w._cb = function (s) {
-                messages.push(JSON.parse(s));
-            };
-
-            logger('TEST').error();
-
-            expect(messages.length).to.equal(0);
-        });
-
-        it('error gets error messages', function () {
             logger.configure({
                 streams: [
                     { level: 'error', stream: w }
                 ]
             });
 
+            w._cb = function () {
+                console.log('this should not happen');
+            };
+
+            logger('TEST').error();
+        });
+
+        it('error gets error messages', function () {
             var messages = send_messages();
 
             expect(messages.length).to.equal(1);
