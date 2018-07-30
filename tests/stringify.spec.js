@@ -24,6 +24,11 @@ describe('lib/stringify.js', function () {
         expect(o.msg).to.equal('Message');
     });
 
+    it('stringifies message with quotes', function () {
+        var o = test('Message with "quotes"');
+        expect(o.msg).to.equal('Message with "quotes"');
+    });
+
     it('stringifies log with null data', function () {
         var o = test('Message', null);
 
