@@ -66,6 +66,7 @@ If the optional `params` object is provided then its properties will be included
 The `options` object can include the following properties:
 
 - {bool} fastTime - if set, time will be a number in milliseconds
+- {bool} flipArgs - if set, the log methods will accept ([params], message) as arguments instead, for compatibility
 - {array} streams - array of objects with `level` and `stream` properties
 
 ### logger(name, [params])
@@ -85,3 +86,5 @@ If `params` is not an object then it will be assigned to a `.data` property on t
 
 If `params` is an `Error` object then it will be assigned to an `.error` property on the log message JSON as an object with `.code`, `.message` and `.stack` properties.
 If `params` has a property that is an `Error` object then the property will be logged as an object in the same manner.
+
+Also, see the `flipArgs` configuration option above.

@@ -11,6 +11,7 @@ var logger = require('./lib/logger.js');
 
 var config = {
     fastTime: false,
+    flipArgs: false,
     levels: ['trace', 'debug', 'info', 'warn', 'error'],
     streams: Object.create(null)
 };
@@ -38,6 +39,10 @@ poleno.configure = function (opts) {
 
     if (opts.fastTime !== undefined) {
         config.fastTime = opts.fastTime;
+    }
+
+    if (opts.flipArgs !== undefined) {
+        config.flipArgs = opts.flipArgs;
     }
 
     if (opts.streams) {

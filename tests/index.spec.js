@@ -15,6 +15,36 @@ describe('index.js', function () {
         callback();
     };
 
+    function send_messages (log, data) {
+        var messages = [];
+        log = log || logger('TEST');
+
+        if (data === null) {
+            data = undefined;
+        } else {
+            data = data || { hello: 'world' };
+        }
+
+        w._cb = function (s) {
+            var o;
+
+            try {
+                o = JSON.parse(s);
+            } catch (e) {
+                console.log(s);
+                throw e;
+            }
+
+            messages.push(o);
+        };
+
+        levels.forEach(function (l) {
+            log[l]('Hello', data);
+        });
+
+        return messages;
+    }
+
     context('general tests', function () {
         it('configure does nothing of no options are provided', function () {
             logger.configure();
@@ -38,32 +68,6 @@ describe('index.js', function () {
     });
 
     context('default argument order', function () {
-        function send_messages (log, data) {
-            var messages = [];
-            log = log || logger('TEST');
-
-            data = data || { hello: 'world' };
-
-            w._cb = function (s) {
-                var o;
-
-                try {
-                    o = JSON.parse(s);
-                } catch (e) {
-                    console.log(s);
-                    throw e;
-                }
-
-                messages.push(o);
-            };
-
-            levels.forEach(function (l) {
-                log[l]('Hello', data);
-            });
-
-            return messages;
-        }
-
         it('logger does nothing if there are no streams are defined', function () {
             var messages = send_messages();
             expect(messages.length).to.equal(0);
@@ -156,24 +160,6 @@ describe('index.js', function () {
             var messages = send_messages();
 
             expect(messages.length).to.equal(5);
-
-            messages.forEach(function (m) {
-                expect(m.hello).to.equal('world');
-                expect(m.msg).to.equal('Hello');
-            });
-        });
-
-        it('writes logs to multiple streams', function () {
-            logger.configure({
-                streams: [
-                    { level: 'error', stream: w },
-                    { level: 'warn', stream: w }
-                ]
-            });
-
-            var messages = send_messages();
-
-            expect(messages.length).to.equal(3);
 
             messages.forEach(function (m) {
                 expect(m.hello).to.equal('world');
@@ -275,6 +261,65 @@ describe('index.js', function () {
             messages.forEach(function (m) {
                 expect(m.error.message).to.equal(err.message);
                 expect(m.error.stack).to.equal(err.stack);
+            });
+        });
+    });
+
+    context('with flipArgs option enabled', function () {
+        it('logger does nothing if there are no streams are defined', function () {
+            logger.configure({
+                flipArgs: true,
+                streams: []
+            });
+
+            w._cb = function () {
+                throw new Error('this should not happen');
+            };
+
+            logger('TEST').info();
+        });
+
+        it('does nothing if no arguments provided', function () {
+            logger.configure({
+                streams: [
+                    { level: 'trace', stream: w }
+                ]
+            });
+
+            logger('TEST').info();
+
+        });
+
+        it('logs messages with no data', function () {
+            var messages = [];
+
+            w._cb = function (s) {
+                messages.push(JSON.parse(s));
+            };
+
+            logger('TEST').info('Message');
+            logger('TEST').info(undefined, 'Message');
+
+            expect(messages.length).to.equal(2);
+
+            messages.forEach(function (m) {
+                expect(m.data).to.equal(undefined);
+                expect(m.msg).to.equal('Message');
+            });
+        });
+
+        it('logs message with data', function () {
+            var messages = [];
+
+            w._cb = function (s) {
+                messages.push(JSON.parse(s));
+            };
+
+            logger('TEST').info('Data', 'Message');
+
+            messages.forEach(function (m) {
+                expect(m.data).to.equal('Data');
+                expect(m.msg).to.equal('Message');
             });
         });
     });
