@@ -15,266 +15,267 @@ describe('index.js', function () {
         callback();
     };
 
-    function send_messages (log, data) {
-        var messages = [];
-
-        log = log || logger('TEST');
-        data = data || { hello: 'world' };
-
-        w._cb = function (s) {
-            var o;
-
-            try {
-                o = JSON.parse(s);
-            } catch (e) {
-                console.log(s);
-                throw e;
-            }
-
-            messages.push(o);
-        };
-
-        levels.forEach(function (l) {
-            log[l]('Hello', data);
+    context('general tests', function () {
+        it('configure does nothing of no options are provided', function () {
+            logger.configure();
         });
 
-        return messages;
-    }
+        it('returns a logger instance', function () {
+            var log = logger('A');
 
-    it('configure does nothing of no options are provided', function () {
-        logger.configure();
-    });
+            levels.forEach(function (l) {
+                expect(typeof log[l]).to.equal('function');
+            });
+        });
 
-    it('returns a logger instance', function () {
-        var log = logger('A');
+        it('returns a child instance', function () {
+            var log = logger('B')('CHILD');
 
-        levels.forEach(function (l) {
-            expect(typeof log[l]).to.equal('function');
+            levels.forEach(function (l) {
+                expect(typeof log[l]).to.equal('function');
+            });
         });
     });
 
-    it('returns a child instance', function () {
-        var log = logger('B')('CHILD');
+    context('default argument order', function () {
+        function send_messages (log, data) {
+            var messages = [];
+            log = log || logger('TEST');
 
-        levels.forEach(function (l) {
-            expect(typeof log[l]).to.equal('function');
-        });
-    });
+            data = data || { hello: 'world' };
 
-    it('logger does nothing if there are no streams are defined', function () {
-        var log = logger('C');
+            w._cb = function (s) {
+                var o;
 
-        levels.forEach(function (l) {
-            log[l]('Test Message', { hello: 'world' });
-        });
-    });
+                try {
+                    o = JSON.parse(s);
+                } catch (e) {
+                    console.log(s);
+                    throw e;
+                }
 
-    it('error gets error messages', function () {
-        logger.configure({
-            streams: [
-                { level: 'error', stream: w }
-            ]
-        });
+                messages.push(o);
+            };
 
-        var messages = send_messages();
+            levels.forEach(function (l) {
+                log[l]('Hello', data);
+            });
 
-        expect(messages.length).to.equal(1);
-        expect(messages[0].hello).to.equal('world');
-        expect(messages[0].msg).to.equal('Hello');
-    });
+            return messages;
+        }
 
-    it('warn gets warn and error messages', function () {
-        logger.configure({
-            streams: [
-                { level: 'warn', stream: w }
-            ]
+        it('logger does nothing if there are no streams are defined', function () {
+            var messages = send_messages();
+            expect(messages.length).to.equal(0);
         });
 
-        var messages = send_messages();
+        it('does nothing if no arguments provided', function () {
+            var messages = [];
 
-        expect(messages.length).to.equal(2);
+            w._cb = function (s) {
+                messages.push(JSON.parse(s));
+            };
 
-        messages.forEach(function (m) {
-            expect(m.hello).to.equal('world');
-            expect(m.msg).to.equal('Hello');
-        });
-    });
+            logger('TEST').error();
 
-    it('info gets info, warn and error messages', function () {
-        logger.configure({
-            streams: [
-                { level: 'info', stream: w }
-            ]
+            expect(messages.length).to.equal(0);
         });
 
-        var messages = send_messages();
+        it('error gets error messages', function () {
+            logger.configure({
+                streams: [
+                    { level: 'error', stream: w }
+                ]
+            });
 
-        expect(messages.length).to.equal(3);
+            var messages = send_messages();
 
-        messages.forEach(function (m) {
-            expect(m.hello).to.equal('world');
-            expect(m.msg).to.equal('Hello');
-        });
-    });
-
-    it('debug gets debug, info, warn and error messages', function () {
-        logger.configure({
-            streams: [
-                { level: 'debug', stream: w }
-            ]
+            expect(messages.length).to.equal(1);
+            expect(messages[0].hello).to.equal('world');
+            expect(messages[0].msg).to.equal('Hello');
         });
 
-        var messages = send_messages();
+        it('warn gets warn and error messages', function () {
+            logger.configure({
+                streams: [
+                    { level: 'warn', stream: w }
+                ]
+            });
 
-        expect(messages.length).to.equal(4);
+            var messages = send_messages();
 
-        messages.forEach(function (m) {
-            expect(m.hello).to.equal('world');
-            expect(m.msg).to.equal('Hello');
-        });
-    });
+            expect(messages.length).to.equal(2);
 
-    it('trace gets trace, debug, info, warn and error messages', function () {
-        logger.configure({
-            streams: [
-                { level: 'trace', stream: w }
-            ]
-        });
-
-        var messages = send_messages();
-
-        expect(messages.length).to.equal(5);
-
-        messages.forEach(function (m) {
-            expect(m.hello).to.equal('world');
-            expect(m.msg).to.equal('Hello');
-        });
-    });
-
-    it('writes logs to multiple streams', function () {
-        logger.configure({
-            streams: [
-                { level: 'error', stream: w },
-                { level: 'warn', stream: w }
-            ]
+            messages.forEach(function (m) {
+                expect(m.hello).to.equal('world');
+                expect(m.msg).to.equal('Hello');
+            });
         });
 
-        var messages = send_messages();
+        it('info gets info, warn and error messages', function () {
+            logger.configure({
+                streams: [
+                    { level: 'info', stream: w }
+                ]
+            });
 
-        expect(messages.length).to.equal(3);
+            var messages = send_messages();
 
-        messages.forEach(function (m) {
-            expect(m.hello).to.equal('world');
-            expect(m.msg).to.equal('Hello');
-        });
-    });
+            expect(messages.length).to.equal(3);
 
-    it('logs time as string by default', function () {
-        logger.configure({
-            streams: [
-                { level: 'error', stream: w },
-            ]
-        });
-
-        var messages = send_messages();
-
-        expect(typeof messages[0].time).to.equal('string');
-    });
-
-    it('logs time as a number if fastTime is set', function () {
-        logger.configure({
-            fastTime: true
+            messages.forEach(function (m) {
+                expect(m.hello).to.equal('world');
+                expect(m.msg).to.equal('Hello');
+            });
         });
 
-        var messages = send_messages();
+        it('debug gets debug, info, warn and error messages', function () {
+            logger.configure({
+                streams: [
+                    { level: 'debug', stream: w }
+                ]
+            });
 
-        expect(typeof messages[0].time).to.equal('number');
-    });
+            var messages = send_messages();
 
-    it('sets correct logger name', function () {
-        var log = logger('FOO');
-        var messages = send_messages(log);
+            expect(messages.length).to.equal(4);
 
-        expect(messages[0].name).to.equal('FOO');
-    });
-
-    it('sets correct child logger name', function () {
-        var log = logger('FOO')('BAR')('BAZ');
-        var messages = send_messages(log);
-
-        expect(messages[0].name).to.equal('FOO:BAR:BAZ');
-    });
-
-    it('sets correct child logger name when name is not provided', function () {
-        var log = logger('FOO')('BAR')('');
-        var messages = send_messages(log);
-
-        expect(messages[0].name).to.equal('FOO:BAR');
-    });
-
-    it('sets logger params', function () {
-        var log = logger('FOO', { foo: 'foo' });
-        var messages = send_messages(log);
-
-        expect(messages[0].foo).to.equal('foo');
-    });
-
-    it('sets child logger params', function () {
-        var log = logger('FOO')('BAR', { bar: 'bar' });
-        var messages = send_messages(log);
-
-        expect(messages[0].bar).to.equal('bar');
-    });
-
-    it('inherits parent logger params', function () {
-        var log = logger('FOO', { foo: 'foo' })('BAR', { bar: 'bar' });
-        var messages = send_messages(log);
-
-        expect(messages[0].foo).to.equal('foo');
-        expect(messages[0].bar).to.equal('bar');
-    });
-
-    it('logs message alone', function () {
-        var messages = [];
-
-        w._cb = function (s) {
-            messages.push(JSON.parse(s));
-        };
-
-        logger('TEST').error('Message');
-        logger('TEST').error('Message');
-
-        messages.forEach(function (m) {
-            expect(m.msg).to.equal('Message');
+            messages.forEach(function (m) {
+                expect(m.hello).to.equal('world');
+                expect(m.msg).to.equal('Hello');
+            });
         });
-    });
 
-    it('does nothing if no arguments provided', function () {
-        var messages = [];
+        it('trace gets trace, debug, info, warn and error messages', function () {
+            logger.configure({
+                streams: [
+                    { level: 'trace', stream: w }
+                ]
+            });
 
-        w._cb = function (s) {
-            messages.push(JSON.parse(s));
-        };
+            var messages = send_messages();
 
-        logger('TEST').error();
+            expect(messages.length).to.equal(5);
 
-        expect(messages.length).to.equal(0);
-    });
+            messages.forEach(function (m) {
+                expect(m.hello).to.equal('world');
+                expect(m.msg).to.equal('Hello');
+            });
+        });
 
-    it('logs error objects', function () {
-        var messages = [];
-        var err = new Error('Test Error');
+        it('writes logs to multiple streams', function () {
+            logger.configure({
+                streams: [
+                    { level: 'error', stream: w },
+                    { level: 'warn', stream: w }
+                ]
+            });
 
-        w._cb = function (s) {
-            messages.push(JSON.parse(s));
-        };
+            var messages = send_messages();
 
-        logger('TEST').error('Message', { error: err });
-        logger('TEST').error('Message', err);
+            expect(messages.length).to.equal(3);
 
-        messages.forEach(function (m) {
-            expect(m.error.message).to.equal(err.message);
-            expect(m.error.stack).to.equal(err.stack);
+            messages.forEach(function (m) {
+                expect(m.hello).to.equal('world');
+                expect(m.msg).to.equal('Hello');
+            });
+        });
+
+        it('logs time as string by default', function () {
+            logger.configure({
+                streams: [
+                    { level: 'error', stream: w },
+                ]
+            });
+
+            var messages = send_messages();
+
+            expect(typeof messages[0].time).to.equal('string');
+        });
+
+        it('logs time as a number if fastTime is set', function () {
+            logger.configure({
+                fastTime: true
+            });
+
+            var messages = send_messages();
+
+            expect(typeof messages[0].time).to.equal('number');
+        });
+
+        it('sets correct logger name', function () {
+            var log = logger('FOO');
+            var messages = send_messages(log);
+
+            expect(messages[0].name).to.equal('FOO');
+        });
+
+        it('sets correct child logger name', function () {
+            var log = logger('FOO')('BAR')('BAZ');
+            var messages = send_messages(log);
+
+            expect(messages[0].name).to.equal('FOO:BAR:BAZ');
+        });
+
+        it('sets correct child logger name when name is not provided', function () {
+            var log = logger('FOO')('BAR')('');
+            var messages = send_messages(log);
+
+            expect(messages[0].name).to.equal('FOO:BAR');
+        });
+
+        it('sets logger params', function () {
+            var log = logger('FOO', { foo: 'foo' });
+            var messages = send_messages(log);
+
+            expect(messages[0].foo).to.equal('foo');
+        });
+
+        it('sets child logger params', function () {
+            var log = logger('FOO')('BAR', { bar: 'bar' });
+            var messages = send_messages(log);
+
+            expect(messages[0].bar).to.equal('bar');
+        });
+
+        it('inherits parent logger params', function () {
+            var log = logger('FOO', { foo: 'foo' })('BAR', { bar: 'bar' });
+            var messages = send_messages(log);
+
+            expect(messages[0].foo).to.equal('foo');
+            expect(messages[0].bar).to.equal('bar');
+        });
+
+        it('logs message alone', function () {
+            var messages = [];
+
+            w._cb = function (s) {
+                messages.push(JSON.parse(s));
+            };
+
+            logger('TEST').error('Message');
+            logger('TEST').error('Message');
+
+            messages.forEach(function (m) {
+                expect(m.msg).to.equal('Message');
+            });
+        });
+
+        it('logs error objects', function () {
+            var messages = [];
+            var err = new Error('Test Error');
+
+            w._cb = function (s) {
+                messages.push(JSON.parse(s));
+            };
+
+            logger('TEST').error('Message', { error: err });
+            logger('TEST').error('Message', err);
+
+            messages.forEach(function (m) {
+                expect(m.error.message).to.equal(err.message);
+                expect(m.error.stack).to.equal(err.stack);
+            });
         });
     });
 });
