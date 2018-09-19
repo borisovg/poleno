@@ -213,6 +213,13 @@ describe('index.js', function () {
             expect(messages[0].foo).to.equal('foo');
         });
 
+        it('is not bothered by logger params with undefined values', function () {
+            var log = logger('FOO', { bar: undefined });
+            var messages = send_messages(log);
+
+            expect(messages[0].name).to.equal('FOO');
+        });
+
         it('sets child logger params', function () {
             var log = logger('FOO')('BAR', { bar: 'bar' });
             var messages = send_messages(log);
