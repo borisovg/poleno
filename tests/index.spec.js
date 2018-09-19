@@ -1,14 +1,14 @@
-/*jshint node:true, mocha:true*/
+/*jshint esversion: 6, node:true, mocha:true, varstmt:true*/
 'use strict';
 
-var expect = require('chai').expect;
-var logger = require('../index.js');
-var stream = require('stream');
+const { expect } = require('chai');
+const logger = require('../index.js');
+const stream = require('stream');
 
-var levels = ['trace', 'debug', 'info', 'warn', 'error'];
+const levels = ['trace', 'debug', 'info', 'warn', 'error'];
 
 describe('index.js', function () {
-    var w = new stream.Writable();
+    const w = new stream.Writable();
 
     w._write = function (chunk, encoding, callback) {
         w._cb(chunk.toString());
@@ -16,7 +16,7 @@ describe('index.js', function () {
     };
 
     function send_messages (log, data) {
-        var messages = [];
+        const messages = [];
         log = log || logger('TEST');
 
         if (data === null) {
@@ -26,7 +26,7 @@ describe('index.js', function () {
         }
 
         w._cb = function (s) {
-            var o;
+            let o;
 
             try {
                 o = JSON.parse(s);
@@ -51,7 +51,7 @@ describe('index.js', function () {
         });
 
         it('returns a logger instance', function () {
-            var log = logger('A');
+            const log = logger('A');
 
             levels.forEach(function (l) {
                 expect(typeof log[l]).to.equal('function');
@@ -59,7 +59,7 @@ describe('index.js', function () {
         });
 
         it('returns a child instance', function () {
-            var log = logger('B')('CHILD');
+            const log = logger('B')('CHILD');
 
             levels.forEach(function (l) {
                 expect(typeof log[l]).to.equal('function');
@@ -69,7 +69,7 @@ describe('index.js', function () {
 
     context('default argument order', function () {
         it('logger does nothing if there are no streams are defined', function () {
-            var messages = send_messages();
+            const messages = send_messages();
             expect(messages.length).to.equal(0);
         });
 
@@ -88,7 +88,7 @@ describe('index.js', function () {
         });
 
         it('error gets error messages', function () {
-            var messages = send_messages();
+            const messages = send_messages();
 
             expect(messages.length).to.equal(1);
             expect(messages[0].hello).to.equal('world');
@@ -102,7 +102,7 @@ describe('index.js', function () {
                 ]
             });
 
-            var messages = send_messages();
+            const messages = send_messages();
 
             expect(messages.length).to.equal(2);
 
@@ -119,7 +119,7 @@ describe('index.js', function () {
                 ]
             });
 
-            var messages = send_messages();
+            const messages = send_messages();
 
             expect(messages.length).to.equal(3);
 
@@ -136,7 +136,7 @@ describe('index.js', function () {
                 ]
             });
 
-            var messages = send_messages();
+            const messages = send_messages();
 
             expect(messages.length).to.equal(4);
 
@@ -153,7 +153,7 @@ describe('index.js', function () {
                 ]
             });
 
-            var messages = send_messages();
+            const messages = send_messages();
 
             expect(messages.length).to.equal(5);
 
@@ -170,7 +170,7 @@ describe('index.js', function () {
                 ]
             });
 
-            var messages = send_messages();
+            const messages = send_messages();
 
             expect(typeof messages[0].time).to.equal('string');
         });
@@ -180,63 +180,63 @@ describe('index.js', function () {
                 fastTime: true
             });
 
-            var messages = send_messages();
+            const messages = send_messages();
 
             expect(typeof messages[0].time).to.equal('number');
         });
 
         it('sets correct logger name', function () {
-            var log = logger('FOO');
-            var messages = send_messages(log);
+            const log = logger('FOO');
+            const messages = send_messages(log);
 
             expect(messages[0].name).to.equal('FOO');
         });
 
         it('sets correct child logger name', function () {
-            var log = logger('FOO')('BAR')('BAZ');
-            var messages = send_messages(log);
+            const log = logger('FOO')('BAR')('BAZ');
+            const messages = send_messages(log);
 
             expect(messages[0].name).to.equal('FOO:BAR:BAZ');
         });
 
         it('sets correct child logger name when name is not provided', function () {
-            var log = logger('FOO')('BAR')('');
-            var messages = send_messages(log);
+            const log = logger('FOO')('BAR')('');
+            const messages = send_messages(log);
 
             expect(messages[0].name).to.equal('FOO:BAR');
         });
 
         it('sets logger params', function () {
-            var log = logger('FOO', { foo: 'foo' });
-            var messages = send_messages(log);
+            const log = logger('FOO', { foo: 'foo' });
+            const messages = send_messages(log);
 
             expect(messages[0].foo).to.equal('foo');
         });
 
         it('is not bothered by logger params with undefined values', function () {
-            var log = logger('FOO', { bar: undefined });
-            var messages = send_messages(log);
+            const log = logger('FOO', { bar: undefined });
+            const messages = send_messages(log);
 
             expect(messages[0].name).to.equal('FOO');
         });
 
         it('sets child logger params', function () {
-            var log = logger('FOO')('BAR', { bar: 'bar' });
-            var messages = send_messages(log);
+            const log = logger('FOO')('BAR', { bar: 'bar' });
+            const messages = send_messages(log);
 
             expect(messages[0].bar).to.equal('bar');
         });
 
         it('inherits parent logger params', function () {
-            var log = logger('FOO', { foo: 'foo' })('BAR', { bar: 'bar' });
-            var messages = send_messages(log);
+            const log = logger('FOO', { foo: 'foo' })('BAR', { bar: 'bar' });
+            const messages = send_messages(log);
 
             expect(messages[0].foo).to.equal('foo');
             expect(messages[0].bar).to.equal('bar');
         });
 
         it('logs message alone', function () {
-            var messages = [];
+            const messages = [];
 
             w._cb = function (s) {
                 messages.push(JSON.parse(s));
@@ -251,19 +251,19 @@ describe('index.js', function () {
         });
 
         it('logs error objects', function () {
-            var messages = [];
-            var err = new Error('Test Error');
+            const messages = [];
+            const error = new Error('Test Error');
 
             w._cb = function (s) {
                 messages.push(JSON.parse(s));
             };
 
-            logger('TEST').error('Message', { error: err });
-            logger('TEST').error('Message', err);
+            logger('TEST').error('Message', { error });
+            logger('TEST').error('Message', error);
 
             messages.forEach(function (m) {
-                expect(m.error.message).to.equal(err.message);
-                expect(m.error.stack).to.equal(err.stack);
+                expect(m.error.message).to.equal(error.message);
+                expect(m.error.stack).to.equal(error.stack);
             });
         });
     });
@@ -294,7 +294,7 @@ describe('index.js', function () {
         });
 
         it('logs messages with no data', function () {
-            var messages = [];
+            const messages = [];
 
             w._cb = function (s) {
                 messages.push(JSON.parse(s));
@@ -312,7 +312,7 @@ describe('index.js', function () {
         });
 
         it('logs message with data', function () {
-            var messages = [];
+            const messages = [];
 
             w._cb = function (s) {
                 messages.push(JSON.parse(s));

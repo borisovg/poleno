@@ -1,12 +1,14 @@
-/*jshint node:true, mocha:true*/
+/*jshint esversion: 6, node:true, mocha:true, varstmt:true*/
 'use strict';
 
-var expect = require('chai').expect;
-var util = require('util');
-var rewire = require('rewire');
-var viewer = rewire('../viewer.js');
+const chai = require('chai');
+const util = require('util');
+const rewire = require('rewire');
+const viewer = rewire('../viewer.js');
 
-var colours = {
+const expect = chai.expect;
+
+const colours = {
     debug: '\x1b[2m',
     error: '\x1b[31m',
     info: '\x1b[1m',
@@ -14,24 +16,24 @@ var colours = {
     warn: '\x1b[33m'
 };
 
-var levels = ['trace', 'debug', 'info', 'warn', 'error'];
+const levels = ['trace', 'debug', 'info', 'warn', 'error'];
 
 describe('viewer.js', function () {
-    var rl = viewer.__get__('rl');
+    const rl = viewer.__get__('rl');
 
     levels.forEach(function (level) {
-        it('parses ' + level + ' messages', function (done) {
-            var o = {
+        it(`parses ${level} messages`, function (done) {
+            const o = {
                 time: 'A',
                 hostname: 'B',
                 name: 'C',
-                level: level,
+                level,
                 msg: 'D',
                 foo: 'bar'
             };
 
-            var msg = JSON.stringify(o);
-            var expected = colours[level] + 'A B C ' + level.toUpperCase() + ' :: D {\n  "foo": "bar"\n}' + '\x1b[0m';
+            const msg = JSON.stringify(o);
+            const expected = `${colours[level]}A B C ${level.toUpperCase()} :: D {\n  "foo": "bar"\n}\x1b[0m`;
 
             if (level === 'debug' || level === 'info' || level === 'trace') {
                 viewer.__set__('console', {
@@ -55,7 +57,7 @@ describe('viewer.js', function () {
     });
 
     it('logs non-JSON strings to STDERR', function (done) {
-        var str = 'foo';
+        const str = 'foo';
 
         viewer.__set__('console', {
             error: function () {
@@ -69,7 +71,7 @@ describe('viewer.js', function () {
     });
 
     it('logs invalid JSON strings to STDERR', function (done) {
-        var str = '{spanner}';
+        const str = '{spanner}';
 
         viewer.__set__('console', {
             error: function () {
