@@ -34,23 +34,21 @@ describe('viewer.js', function () {
 
             const msg = JSON.stringify(o);
             const expected = `${colours[level]}A B C ${level.toUpperCase()} :: D {\n  "foo": "bar"\n}\x1b[0m`;
+            let method;
 
             if (level === 'debug' || level === 'info' || level === 'trace') {
-                viewer.__set__('console', {
-                    log: function () {
-                        expect(util.format.apply(undefined, Array.prototype.slice.call(arguments))).to.equal(expected);
-                        done();
-                    }
-                });
-
+                method = 'log';
             } else {
-                viewer.__set__('console', {
-                    error: function () {
-                        expect(util.format.apply(undefined, Array.prototype.slice.call(arguments))).to.equal(expected);
-                        done();
-                    },
-                });
+                method = 'error';
             }
+
+            chai.util.overwriteMethod(console, method, function (self) {
+                return function () {
+                    console[method] = self;
+                    expect(util.format.apply(undefined, Array.prototype.slice.call(arguments))).to.equal(expected);
+                    done();
+                };
+            });
 
             rl.emit('line', msg);
         });
@@ -59,12 +57,13 @@ describe('viewer.js', function () {
     it('logs non-JSON strings to STDERR', function (done) {
         const str = 'foo';
 
-        viewer.__set__('console', {
-            error: function () {
+        chai.util.overwriteMethod(console, 'error', function (self) {
+            return function () {
+                console.error = self;
                 expect(arguments.length).to.equal(1);
                 expect(arguments[0]).to.equal(str);
                 done();
-            },
+            };
         });
 
         rl.emit('line', str);
@@ -73,12 +72,13 @@ describe('viewer.js', function () {
     it('logs invalid JSON strings to STDERR', function (done) {
         const str = '{spanner}';
 
-        viewer.__set__('console', {
-            error: function () {
+        chai.util.overwriteMethod(console, 'error', function (self) {
+            return function () {
+                console.error = self;
                 expect(arguments.length).to.equal(1);
                 expect(arguments[0]).to.equal(str);
                 done();
-            },
+            };
         });
 
         rl.emit('line', str);
