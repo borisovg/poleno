@@ -25,16 +25,7 @@ describe('index.js', function () {
         }
 
         w._cb = function (s) {
-            let o;
-
-            try {
-                o = JSON.parse(s);
-            } catch (e) {
-                console.log(s);
-                throw e;
-            }
-
-            messages.push(o);
+            messages.push(JSON.parse(s));
         };
 
         levels.forEach(function (l) {
@@ -80,7 +71,7 @@ describe('index.js', function () {
             });
 
             w._cb = function () {
-                console.log('this should not happen');
+                throw new Error('this should not happen');
             };
 
             logger('TEST').error();

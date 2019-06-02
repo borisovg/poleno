@@ -6,17 +6,7 @@ const stringify = require('../lib/stringify.js');
 describe('lib/stringify.js', function () {
     function test (a, b) {
         const s = stringify(a, b);
-        let o;
-
-        try {
-            o = JSON.parse(`{${s}}`);
-
-        } catch (e) {
-            console.log(s);
-            throw e;
-        }
-
-        return o;
+        return JSON.parse(`{${s}}`);
     }
 
     it('stringifies message only log', function () {
