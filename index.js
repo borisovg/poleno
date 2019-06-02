@@ -1,4 +1,3 @@
-/*jshint node:true*/
 'use strict';
 
 /**
@@ -46,7 +45,7 @@ poleno.configure = function (opts) {
     }
 
     if (opts.streams) {
-        // jshint -W089
+        /* eslint-disable-next-line guard-for-in */
         for (l in config.streams) {
             config.streams[l] = undefined;
         }

@@ -1,4 +1,4 @@
-/*jshint esversion: 6, node:true, mocha:true, varstmt:true*/
+/* eslint-disable no-console */
 'use strict';
 
 const chai = require('chai');

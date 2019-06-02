@@ -1,4 +1,3 @@
-/*jshint esversion: 6, node:true, mocha:true, varstmt:true*/
 'use strict';
 
 const { expect } = require('chai');
