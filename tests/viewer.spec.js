@@ -3,7 +3,6 @@
 
 const chai = require('chai');
 const cp = require('child_process');
-const util = require('util');
 const rewire = require('rewire');
 const viewer = rewire('../viewer.js');
 
@@ -19,11 +18,11 @@ const colours = {
 
 const levels = ['trace', 'debug', 'info', 'warn', 'error'];
 
-describe('viewer.js', function () {
+describe('viewer.js', () => {
     const rl = viewer.__get__('rl');
 
-    levels.forEach(function (level) {
-        it(`parses ${level} messages`, function (done) {
+    levels.forEach((level) => {
+        it(`parses ${level} messages`, (done) => {
             const o = {
                 time: 'A',
                 hostname: 'B',
@@ -43,54 +42,48 @@ describe('viewer.js', function () {
                 method = 'error';
             }
 
-            chai.util.overwriteMethod(console, method, function (self) {
-                return function () {
-                    console[method] = self;
-                    expect(util.format.apply(undefined, Array.prototype.slice.call(arguments))).to.equal(expected);
-                    done();
-                };
+            chai.util.overwriteMethod(console, method, (self) => (...args) => {
+                console[method] = self;
+                expect(args.join(' ')).to.equal(expected);
+                done();
             });
 
             rl.emit('line', msg);
         });
     });
 
-    it('logs non-JSON strings to STDERR', function (done) {
+    it('logs non-JSON strings to STDERR', (done) => {
         const str = 'foo';
 
-        chai.util.overwriteMethod(console, 'error', function (self) {
-            return function () {
-                console.error = self;
-                expect(arguments.length).to.equal(1);
-                expect(arguments[0]).to.equal(str);
-                done();
-            };
+        chai.util.overwriteMethod(console, 'error', (self) => (...args) => {
+            console.error = self;
+            expect(args.length).to.equal(1);
+            expect(args[0]).to.equal(str);
+            done();
         });
 
         rl.emit('line', str);
     });
 
-    it('logs invalid JSON strings to STDERR', function (done) {
+    it('logs invalid JSON strings to STDERR', (done) => {
         const str = '{spanner}';
 
-        chai.util.overwriteMethod(console, 'error', function (self) {
-            return function () {
-                console.error = self;
-                expect(arguments.length).to.equal(1);
-                expect(arguments[0]).to.equal(str);
-                done();
-            };
+        chai.util.overwriteMethod(console, 'error', (self) => (...args) => {
+            console.error = self;
+            expect(args.length).to.equal(1);
+            expect(args[0]).to.equal(str);
+            done();
         });
 
         rl.emit('line', str);
     });
 
-    it('ignores SIGINT if piped to', function () {
+    it('ignores SIGINT if piped to', () => {
         process.stdin.isTTY = false;
         rewire('../viewer.js');
     });
 
-    it('does not include colour codes in string if output is piped', function (done) {
+    it('does not include colour codes in string if output is piped', (done) => {
         const p = cp.spawn('node', ['../viewer.js']);
 
         p.stdout.on('data', (chunk) => {
@@ -111,7 +104,5 @@ describe('viewer.js', function () {
         p.stdin.end();
     });
 
-    after(function () {
-        process.stdin.pause();
-    });
+    after(() => process.stdin.pause());
 });
