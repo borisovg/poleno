@@ -2,6 +2,7 @@
 'use strict';
 
 const chai = require('chai');
+const cp = require('child_process');
 const util = require('util');
 const rewire = require('rewire');
 const viewer = rewire('../viewer.js');
@@ -87,6 +88,27 @@ describe('viewer.js', function () {
     it('ignores SIGINT if piped to', function () {
         process.stdin.isTTY = false;
         rewire('../viewer.js');
+    });
+
+    it('does not include colour codes in string if output is piped', function (done) {
+        const p = cp.spawn('node', ['../viewer.js']);
+
+        p.stdout.on('data', (chunk) => {
+            expect(chunk.toString()).to.equal('A B C INFO :: D {\n  "foo": "bar"\n}\n');
+            p.kill();
+            done();
+        });
+
+        p.stdin.write(JSON.stringify({
+            time: 'A',
+            hostname: 'B',
+            name: 'C',
+            level: 'info',
+            msg: 'D',
+            foo: 'bar',
+        }));
+
+        p.stdin.end();
     });
 
     after(function () {

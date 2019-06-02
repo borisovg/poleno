@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/*jshint node:true*/
+/* eslint-disable no-console */
 'use strict';
 
 /**
@@ -32,14 +32,33 @@ function filter (k) {
     return (usedKeys.indexOf(k) === -1);
 }
 
-function print (o, dest) {
-    var data = {};
+var print;
 
-    Object.keys(o).filter(filter).forEach(function (k) {
-        data[k] = o[k];
-    });
+if (process.stdout.isTTY) {
+    print = function (o, dest) {
+        var data = {};
 
-    console[dest](colours[o.level] + o.time, o.hostname, o.name, o.level.toUpperCase(), '::', o.msg, JSON.stringify(data, undefined, 2) + '\x1b[0m');
+        Object.keys(o)
+            .filter(filter)
+            .forEach(function (k) {
+                data[k] = o[k];
+            });
+
+        console[dest](colours[o.level] + o.time, o.hostname, o.name, o.level.toUpperCase(), '::', o.msg, JSON.stringify(data, undefined, 2) + '\x1b[0m');
+    };
+
+} else {
+    print = function (o, dest) {
+        var data = {};
+
+        Object.keys(o)
+            .filter(filter)
+            .forEach(function (k) {
+                data[k] = o[k];
+            });
+
+        console[dest](o.time, o.hostname, o.name, o.level.toUpperCase(), '::', o.msg, JSON.stringify(data, undefined, 2));
+    };
 }
 
 rl.on('line', function (line) {
@@ -64,5 +83,5 @@ rl.on('line', function (line) {
 
 // ignore SIGINT when piped to
 if (!process.stdin.isTTY) {
-    process.on('SIGINT', /*istanbul ignore next*/ function () {});
+    process.on('SIGINT', /*istanbul ignore next*/ function () { /* do nothing */ });
 }
